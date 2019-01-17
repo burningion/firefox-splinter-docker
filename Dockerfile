@@ -8,5 +8,6 @@ RUN add-apt-repository -y ppa:mozillateam/firefox-next
 RUN apt-get update && apt-get install -y firefox \
   && rm -rf /var/lib/apt/lists/*
 RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz && tar zxvf geckodriver-v0.23.0-linux64.tar.gz && mv geckodriver /bin/
-RUN python3 -m pip install splinter
+RUN python3 -m pip install splinter pytube beautifulsoup4 requests ipython
+COPY scraper.py ./
 CMD ["/bin/bash"]
