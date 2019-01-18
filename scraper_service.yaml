@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scraperapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: scraperapp
+  template:
+    metadata:
+      labels:
+        app: scraperapp
+    spec:
+      containers:
+      - name: scraperapp
+        image: firefox-splinter:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5005
+        volumeMounts:
+        - name: flasklogs
+          mountPath: /var/log/flask
+        env:
+        - name: DD_AGENT_SERVICE_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: DD_AGENT_SERVICE_PORT
+          value: '8126'
+        - name: DOGSTATSD_HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: DD_LOGS_INJECTION
+          value: 'true'
+      volumes:
+        - hostPath:
+            path: /var/log/flask
+          name: flasklogs
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scraperapp
+spec:
+  selector:
+    app: scraperapp
+  ports:
+  - name: http
+    protocol: TCP
+    port: 5005
+  type: NodePort
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: cm-datadog-confd
+  namespace: default
+data:
+  flasklogs.yaml: |-
+    init_config:
+    instances:
+    logs:
+    - type: file
+      path: /var/log/flask/mylog.json
+      service: flask
+      source: python
+      sourcecategory: sourcecode 
