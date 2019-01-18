@@ -36,11 +36,15 @@ for v in vids:
 print("Found and downloading %i videos" % len(videolist))
 
 try:
-    with open('out.csv', 'w', encoding='utf-8') as csvfile:
+    with open('/downloads/out.csv', 'w', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=columns)
         writer.writeheader()
         for item in videolist:
             writer.writerow(item)
+            try:
+                print(YouTube(item['url']).streams.first().download('/downloads'))
+            except:
+                print("couldn't download %s" % (item['title'].encode('utf-8')))
 except IOError:
     print("couldn't open out.csv for writing %s" % IOError)
 

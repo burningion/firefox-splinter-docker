@@ -8,7 +8,7 @@ This is mostly a tool for me to develop in, but if you want to see how to build 
 
 ```bash
 $ docker build . -t firefox-splinter:latest
-$ docker run -it firefox-splinter:latest /bin/bash
+$ docker run  -v $(pwd)/downloads:/downloads -it firefox-splinter:latest /bin/bash
 ```
 
 With this, you'll then be in the image, where you can start manipulating things:
@@ -29,4 +29,4 @@ This opens a headless browser, does a YouTube search for "clock,creativecommons"
 
 It then prints out the HTML of the page, allowing us to extract the URLs matching our search terms.
 
-For more info, check out the [Splinter](https://splinter.readthedocs.io/en/latest/tutorial.html) docs.
+For more info, check out the [Splinter](https://splinter.readthedocs.io/en/latest/tutorial.html) doc.s
