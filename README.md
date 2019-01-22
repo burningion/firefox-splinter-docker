@@ -39,4 +39,8 @@ For now, files are downloaded using the `hostPath` mount, to my external drive. 
 
 `$ kubectl apply -f scraper_service.yaml`
 
+From there, you should be able to send stuff and generate scraping bots:
 
+```bash
+$ curl --header "Content-Type: application/json"   --request POST   --data '{"pages": 5, "search_terms": "clock,creativecommons"}' http://10.152.183.141:5005/create-scraper
+```

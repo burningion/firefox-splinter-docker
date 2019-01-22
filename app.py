@@ -1,4 +1,5 @@
 import time, csv, os
+import subprocess
 
 from bs4 import BeautifulSoup as bs
 from pytube import YouTube
@@ -19,9 +20,7 @@ try:
 except:
     print("No environment variables for Datadog set. App won't be instrumented.")
 
-from flask import Flask, Response, jsonify, render_template
-
-
+from flask import Flask, Response, jsonify, render_template, request
 
 app = Flask(__name__)
 
@@ -56,5 +55,12 @@ def hello_world():
     statsd.increment('web.page_views')
     return 'Hello, World!'
 
+@app.route('/create-scraper', methods=['POST'])
+def create_scraper():
+    params = request.get_json()
+    result = subprocess.call(['/scraper.py',
+                              str(params['pages']),
+                              str(params['search_terms'])])
+    return 'scraping process created'
 if __name__ == '__main__':
   app.run(host='0.0.0.0',port=5005)

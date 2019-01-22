@@ -1,18 +1,25 @@
+#!/usr/bin/python3
 import time
 import csv
+import argparse
 
 from bs4 import BeautifulSoup as bs
 from pytube import YouTube
-import requests
 
 from splinter import Browser
 
+parser = argparse.ArgumentParser(description='YouTube Video Scraper')
+parser.add_argument('pages', type=int, help='Number of page results to scroll', default=5)
+parser.add_argument('terms', type=str, help='Search terms to search for', default="clock,creativecommons")
+args = parser.parse_args()
+
+
 browser = Browser('firefox', headless=True)
-browser.visit('https://www.youtube.com/results?search_query=clock,creativecommons')
+browser.visit('https://www.youtube.com/results?search_query=%s' % args.terms)
 print("Opening browser...")
 
 time.sleep(2)
-for i in range(5):
+for i in range(args.pages):
     print("scrolling %i..." % (i + 1))
     time.sleep(1.5)
 
