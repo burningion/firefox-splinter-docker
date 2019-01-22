@@ -21,6 +21,8 @@ spec:
         volumeMounts:
         - name: flasklogs
           mountPath: /var/log/flask
+        - name: videos
+          mountPath: /downloads
         env:
         - name: DD_AGENT_SERVICE_HOST
           valueFrom:
@@ -38,6 +40,9 @@ spec:
         - hostPath:
             path: /var/log/flask
           name: flasklogs
+        - hostPath:
+            path: /media/stankley/Samsung_T5/downloaded-videos
+          name: videos
 ---
 apiVersion: v1
 kind: Service

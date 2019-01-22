@@ -29,4 +29,14 @@ This opens a headless browser, does a YouTube search for "clock,creativecommons"
 
 It then prints out the HTML of the page, allowing us to extract the URLs matching our search terms.
 
-For more info, check out the [Splinter](https://splinter.readthedocs.io/en/latest/tutorial.html) doc.s
+For more info, check out the [Splinter](https://splinter.readthedocs.io/en/latest/tutorial.html) docs.
+
+# Running in Kubernetes
+
+This repo is also a WIP kubernetes cluster for a talk on recreating [The Clock](https://www.youtube.com/watch?v=6cOhWtyXGXQ) by Christian Marclay using Python and Machine Learning.
+
+For now, files are downloaded using the `hostPath` mount, to my external drive. If you want to run this in a kubernetes cluster, you'll need to edit the `scraper_service.yaml` and replace it with your local path before running:
+
+`$ kubectl apply -f scraper_service.yaml`
+
+
