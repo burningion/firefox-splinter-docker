@@ -53,14 +53,50 @@ except:
 @app.route('/')
 def hello_world():
     statsd.increment('web.page_views')
-    return 'Hello, World!'
+    return """
+      <!doctype html>
+      <title>messages</title>
+    <style>body { max-width: 500px; margin: auto; padding: 1em; background: black; color: #fff; font: 16px/1.6 menlo, monospace; }</style>
+    <body>
+    hello!
+        <pre id="out"></pre>
+        <script>
+            function sse() {
+                var source = new EventSource('/scraper-status');
+                var out = document.getElementById('out');
+                source.onmessage = function(e) {
+                    // XSS in chat is fun
+                    out.innerHTML =  e.data + '\\n' + out.innerHTML;
+                };
+            }
+    sse();
+    </script>
+    </body>
+    </html>
+    """
 
 @app.route('/create-scraper', methods=['POST'])
 def create_scraper():
     params = request.get_json()
-    result = subprocess.call(['/scraper.py',
+    result = subprocess.Popen(['/scraper.py',
                               str(params['pages']),
                               str(params['search_terms'])])
     return 'scraping process created'
+
+def message_stream():
+    for message in range(5):
+        yield "data: %i\n\n" % message
+        time.sleep(1.0)
+
+@app.route('/update-scraper', methods=['POST'])
+def update_scraper():
+    params = request.get_json()
+    return '{"status": "ok"}'
+
+@app.route('/scraper-status')
+def scraper_status():
+    return Response(message_stream(),
+                    mimetype="text/event-stream")
+
 if __name__ == '__main__':
   app.run(host='0.0.0.0',port=5005)

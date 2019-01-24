@@ -11,6 +11,7 @@ from splinter import Browser
 parser = argparse.ArgumentParser(description='YouTube Video Scraper')
 parser.add_argument('pages', type=int, help='Number of page results to scroll', default=5)
 parser.add_argument('terms', type=str, help='Search terms to search for', default="clock,creativecommons")
+parser.add_argument('uid', type=str, help='UID of Scraper generated', default='000')
 args = parser.parse_args()
 
 
