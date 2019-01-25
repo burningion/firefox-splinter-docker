@@ -90,21 +90,24 @@ lastMessage = 0
 
 def message_stream():
     global totalMessages, lastMessage
+
     while True:
-        time.sleep(0.5)
         if len(totalMessages) > lastMessage:
-            yield "data: %i\n\n" % totalMessages[-1]
-            totalMessages += 1
+            lastMessage += 1
+            yield "data: %s\n\n" % totalMessages[-1]
+        time.sleep(0.5)
+
 
 
 @app.route('/update-scraper', methods=['POST'])
 def update_scraper():
     global totalMessages
+    
     params = request.get_json()
     span = tracer.current_span()
     span.set_tags({'request_json': params})
     totalMessages.append(params['message'])
-    return '{"status": "ok"}'
+    return '{"status": "ok", "totalMessages": %s}' % str(totalMessages)
 
 @app.route('/scraper-status')
 def scraper_status():

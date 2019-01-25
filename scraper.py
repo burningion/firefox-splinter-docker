@@ -17,12 +17,13 @@ parser.add_argument('uid', type=str, help='UID of Scraper generated', default='0
 
 args = parser.parse_args()
 
+message = "Opening browser..."
+requests.post('http://localhost:5005/update-scraper', json={'message': message})
+
 
 browser = Browser('firefox', headless=True)
 browser.visit('https://www.youtube.com/results?search_query=%s' % args.terms)
 
-message = "Opening browser..."
-requests.post('http://localhost:5005/update-scraper', json={'message': message})
 
 
 time.sleep(2)
