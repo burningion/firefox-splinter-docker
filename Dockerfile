@@ -13,6 +13,7 @@ COPY requirements.txt .
 RUN python3 -m pip install -r requirements.txt
 COPY scraper.py ./
 COPY app.py ./
+ADD templates /templates
 
 EXPOSE 5005
 ENTRYPOINT ["python3", "app.py"]

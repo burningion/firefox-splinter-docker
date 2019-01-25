@@ -1,0 +1,19 @@
+<!doctype html>
+<title>messages</title>
+<style>body { max-width: 500px; margin: auto; padding: 1em; background: black; color: #fff; font: 16px/1.6 menlo, monospace; }</style>
+<body>
+    hello world!
+    <pre id="out"></pre>
+    <script>
+     function sse() {
+         var source = new EventSource('/scraper-status');
+         var out = document.getElementById('out');
+         source.onmessage = function(e) {
+             // XSS in chat is fun
+             out.innerHTML =  e.data + '<br />' + out.innerHTML;
+         };
+     }
+     sse();
+    </script>
+</body>
+</html>

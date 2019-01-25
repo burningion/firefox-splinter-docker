@@ -1,13 +1,8 @@
-import time, csv, os
+import time, os
 import subprocess
 
-from bs4 import BeautifulSoup as bs
-from pytube import YouTube
-
-from splinter import Browser
-
 from datadog import initialize, statsd
-from ddtrace import tracer, patch, config
+from ddtrace import tracer, patch
 from ddtrace.contrib.flask import TraceMiddleware
 
 try:
@@ -25,7 +20,7 @@ from flask import Flask, Response, jsonify, render_template, request
 app = Flask(__name__)
 
 #patch traceware
-traced_app = TraceMiddleware(app, tracer, service="webscraper-app", distributed_tracing=False)
+traced_app = TraceMiddleware(app, tracer, service="webscraper-app", distributed_tracing=True)
 
 #logging stuff
 import logging
@@ -53,27 +48,7 @@ except:
 @app.route('/')
 def hello_world():
     statsd.increment('web.page_views')
-    return """
-      <!doctype html>
-      <title>messages</title>
-    <style>body { max-width: 500px; margin: auto; padding: 1em; background: black; color: #fff; font: 16px/1.6 menlo, monospace; }</style>
-    <body>
-    hello!
-        <pre id="out"></pre>
-        <script>
-            function sse() {
-                var source = new EventSource('/scraper-status');
-                var out = document.getElementById('out');
-                source.onmessage = function(e) {
-                    // XSS in chat is fun
-                    out.innerHTML =  e.data + '\\n' + out.innerHTML;
-                };
-            }
-    sse();
-    </script>
-    </body>
-    </html>
-    """
+    return render_template('index.html')
 
 @app.route('/create-scraper', methods=['POST'])
 def create_scraper():
@@ -102,7 +77,7 @@ def message_stream():
 @app.route('/update-scraper', methods=['POST'])
 def update_scraper():
     global totalMessages
-    
+
     params = request.get_json()
     span = tracer.current_span()
     span.set_tags({'request_json': params})
