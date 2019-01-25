@@ -8,20 +8,27 @@ from pytube import YouTube
 
 from splinter import Browser
 
+import requests
+
 parser = argparse.ArgumentParser(description='YouTube Video Scraper')
 parser.add_argument('pages', type=int, help='Number of page results to scroll', default=5)
 parser.add_argument('terms', type=str, help='Search terms to search for', default="clock,creativecommons")
 parser.add_argument('uid', type=str, help='UID of Scraper generated', default='000')
+
 args = parser.parse_args()
 
 
 browser = Browser('firefox', headless=True)
 browser.visit('https://www.youtube.com/results?search_query=%s' % args.terms)
-print("Opening browser...")
+
+message = "Opening browser..."
+requests.post('http://localhost:5005/update-scraper', json={'message': message})
+
 
 time.sleep(2)
 for i in range(args.pages):
-    print("scrolling %i..." % (i + 1))
+    message ="scrolling %i..." % (i + 1)
+    requests.post('http://localhost:5005/update-scraper', json={'message': message})
     time.sleep(1.5)
 
     browser.execute_script("window.scrollBy(0, window.innerHeight * 2);")
@@ -41,7 +48,8 @@ for v in vids:
     except:
         continue
 
-print("Found and downloading %i videos" % len(videolist))
+message = "Found and downloading %i videos" % len(videolist)
+requests.post('http://localhost:5005/update-scraper', json={'message': message})
 
 try:
     with open('/downloads/out.csv', 'w', encoding='utf-8') as csvfile:
@@ -50,9 +58,9 @@ try:
         for item in videolist:
             writer.writerow(item)
             try:
-                print(YouTube(item['url']).streams.first().download('/downloads'))
+                message = YouTube(item['url']).streams.first().download('/downloads')
+                requests.post('http://localhost:5005/update-scraper', json={'message': message})
             except:
                 print("couldn't download %s" % (item['title'].encode('utf-8')))
 except IOError:
     print("couldn't open out.csv for writing %s" % IOError)
-

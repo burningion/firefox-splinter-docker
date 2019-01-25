@@ -78,19 +78,32 @@ def hello_world():
 @app.route('/create-scraper', methods=['POST'])
 def create_scraper():
     params = request.get_json()
-    result = subprocess.Popen(['/scraper.py',
-                              str(params['pages']),
-                              str(params['search_terms'])])
+    result = subprocess.Popen(['ddtrace-run',
+                               'scraper.py',
+                               str(params['pages']),
+                               str(params['search_terms']),
+                               '000'])
     return 'scraping process created'
 
+totalMessages = []
+lastMessage = 0
+
 def message_stream():
-    for message in range(5):
-        yield "data: %i\n\n" % message
-        time.sleep(1.0)
+    global totalMessages, lastMessage
+    while True:
+        time.sleep(0.5)
+        if len(totalMessages) > lastMessage:
+            yield "data: %i\n\n" % totalMessages[-1]
+            totalMessages += 1
+
 
 @app.route('/update-scraper', methods=['POST'])
 def update_scraper():
+    global totalMessages
     params = request.get_json()
+    span = tracer.current_span()
+    span.set_tags({'request_json': params})
+    totalMessages.append(params['message'])
     return '{"status": "ok"}'
 
 @app.route('/scraper-status')
