@@ -2,7 +2,8 @@
 <title>messages</title>
 <style>body { max-width: 500px; margin: auto; padding: 1em; background: black; color: #fff; font: 16px/1.6 menlo, monospace; }</style>
 <body>
-    hello world!
+    <h2>YouTube Scraper v0.1</h2>
+    <br />
     <form>
         Search Terms:
         <input type="text" name="search_terms" />
@@ -38,7 +39,7 @@
              request.send(JSON.stringify(data));
              request.onloadend = function () {
                  var outty = document.getElementById('sent');
-                 sent.innerHTML = 'Scraper created ' + formData.get('search_terms') + sent.innerHTML;
+                 sent.innerHTML = 'Scraper created ' + formData.get('search_terms') + '<br />' + sent.innerHTML;
              }
          });
      });
