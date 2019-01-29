@@ -20,7 +20,6 @@
          var source = new EventSource('/scraper-status');
          var out = document.getElementById('out');
          source.onmessage = function(e) {
-             // XSS in chat is fun
              out.innerHTML =  e.data + '<br />' + out.innerHTML;
          };
      }

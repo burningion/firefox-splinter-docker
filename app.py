@@ -60,6 +60,14 @@ def create_scraper():
                                '000'])
     return 'scraping process created'
 
+@app.route('/videos', methods=['POST', 'GET'])
+def videos():
+    if request.method == 'POST':
+        # TODO: add video info to db
+        return request.get_json()
+    # TODO: list existing videos
+    return {'not': 'existing yet'}
+
 totalMessages = []
 lastMessage = 0
 
@@ -71,8 +79,6 @@ def message_stream():
             lastMessage += 1
             yield "data: %s\n\n" % totalMessages[-1]
         time.sleep(0.5)
-
-
 
 @app.route('/update-scraper', methods=['POST'])
 def update_scraper():
