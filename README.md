@@ -37,7 +37,11 @@ This repo is also a WIP kubernetes cluster for a talk on recreating [The Clock](
 
 For now, files are downloaded using the `hostPath` mount, to my external drive. If you want to run this in a kubernetes cluster, you'll need to edit the `scraper_service.yaml` and replace it with your local path before running:
 
-`$ kubectl apply -f scraper_service.yaml`
+```bash
+$ kubectl create secret generic postgres-user --from-literal=token=<POSTGRES_USER>
+$ kubectl create secret generic postgres-password --from-literal=token=<POSTGRES_PASS>
+$ kubectl apply -f scraper_service.yaml
+```
 
 From there, you should be able to send stuff and generate scraping bots:
 

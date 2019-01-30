@@ -12,8 +12,8 @@ RUN python3 -m pip install splinter pytube beautifulsoup4 requests ipython
 COPY requirements.txt .
 RUN python3 -m pip install -r requirements.txt
 COPY scraper.py ./
-COPY app.py ./
+COPY *.py ./
 ADD templates /templates
 
 EXPOSE 5005
-ENTRYPOINT ["python3", "app.py"]
+ENTRYPOINT ["python3", "app.py"]10.152.183.141

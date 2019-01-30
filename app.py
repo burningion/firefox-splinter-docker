@@ -5,6 +5,9 @@ from datadog import initialize, statsd
 from ddtrace import tracer, patch
 from ddtrace.contrib.flask import TraceMiddleware
 
+from bootstrap import create_app, db
+from models import Video
+
 try:
     initialize(statsd_host=os.environ['DOGSTATSD_HOST_IP'], statsd_port=8125)
     tracer.configure(
@@ -18,6 +21,7 @@ except:
 from flask import Flask, Response, jsonify, render_template, request
 
 app = Flask(__name__)
+# app = create_app()
 
 #patch traceware
 traced_app = TraceMiddleware(app, tracer, service="webscraper-app", distributed_tracing=True)
@@ -64,9 +68,18 @@ def create_scraper():
 def videos():
     if request.method == 'POST':
         # TODO: add video info to db
-        return request.get_json()
-    # TODO: list existing videos
-    return {'not': 'existing yet'}
+        video = request.get_json()
+        newVid = Video(**video)
+        db.session.add(newVid)
+        db.session.commit()
+        return jsonify(newVid.serialize())
+
+    # list existing videos
+    videos = Video.query.all()
+    all_videos = []
+    for video in videos:
+        all_videos.append(video.serialize())
+    return jsonify({"videos": all_videos})
 
 totalMessages = []
 lastMessage = 0

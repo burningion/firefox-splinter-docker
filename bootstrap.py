@@ -9,14 +9,14 @@ from models import Video, db
 tracer.configure(hostname='agent')
 
 import os
-DB_USERNAME = os.environ['POSTGRES_USER']
-DB_PASSWORD = os.environ['POSTGRES_PASSWORD']
+#DB_USERNAME = os.environ['POSTGRES_USER']
+#DB_PASSWORD = os.environ['POSTGRES_PASSWORD']
 
 
 def create_app():
     """Create a Flask application"""
     app = Flask(__name__)
-    #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://' + DB_USERNAME + ':' + DB_PASSWORD + '@' + 'db/' + DB_USERNAME
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -30,5 +30,4 @@ def initialize_database(app, db):
     with app.app_context():
         db.drop_all()
         db.create_all()
-
-db.session.commit()
+        db.session.commit()
