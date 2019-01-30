@@ -9,11 +9,10 @@ RUN apt-get update && apt-get install -y firefox \
   && rm -rf /var/lib/apt/lists/*
 RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz && tar zxvf geckodriver-v0.23.0-linux64.tar.gz && mv geckodriver /bin/
 RUN python3 -m pip install splinter pytube beautifulsoup4 requests ipython
-COPY requirements.txt .
+COPY app/requirements.txt .
 RUN python3 -m pip install -r requirements.txt
-COPY scraper.py ./
-COPY *.py ./
-ADD templates /templates
+COPY app/*.py ./
+ADD app/templates /templates
 
 EXPOSE 5005
 ENTRYPOINT ["python3", "app.py"]10.152.183.141
