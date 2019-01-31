@@ -1,0 +1,48 @@
+<!doctype html>
+<title>messages</title>
+<style>body { max-width: 500px; margin: auto; padding: 1em; background: black; color: #fff; font: 16px/1.6 menlo, monospace; }</style>
+<body>
+    <h2>YouTube Scraper v0.1</h2>
+    <br />
+    <form>
+        Search Terms:
+        <input type="text" name="search_terms" />
+        <br />
+        Number of Pages:
+        <input type="text" name="pages" />
+        <br />
+        <input id="sendit" type="submit" value="submit" onclick />
+    </form>
+    <pre id="sent"></pre>
+    <pre id="out"></pre>
+    <script>
+     function sse() {
+         var source = new EventSource('/scraper-status');
+         var out = document.getElementById('out');
+         source.onmessage = function(e) {
+             out.innerHTML =  e.data + '<br />' + out.innerHTML;
+         };
+     }
+     sse();
+     window.addEventListener("DOMContentLoaded", function () {
+         
+         document.getElementById("sendit").addEventListener("click", function (e) {
+             e.preventDefault();
+             var formElement = document.querySelector("form");
+             var formData = new FormData(formElement);
+             var request = new XMLHttpRequest();
+             let data = {};
+             for (let tuple of formData.entries()) data[tuple[0]] = tuple[1];
+             request.open("POST", '/create-scraper', true);
+             request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+             request.send(JSON.stringify(data));
+             request.onloadend = function () {
+                 var outty = document.getElementById('sent');
+                 sent.innerHTML = 'Scraper created ' + formData.get('search_terms') + '<br />' + sent.innerHTML;
+             }
+         });
+     });
+
+    </script>
+</body>
+</html>
