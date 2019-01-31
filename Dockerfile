@@ -11,8 +11,7 @@ RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckod
 RUN python3 -m pip install splinter pytube beautifulsoup4 requests ipython
 COPY app/requirements.txt .
 RUN python3 -m pip install -r requirements.txt
-COPY app/*.py ./
-ADD app/templates /templates
+COPY app/ ./
 
 EXPOSE 5005
-ENTRYPOINT ["python3", "app.py"]10.152.183.141
+ENTRYPOINT ["python3", "app.py"]
