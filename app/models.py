@@ -7,16 +7,28 @@ class Video(db.Model):
     url = db.Column(db.String(128))
     title = db.Column(db.String(256))
     fps = db.Column(db.Integer)
-    duration = db.Column(db.Interval(native=True))
+    duration = db.Column(db.Integer())
     subtitles = db.Column(db.Text())
-
-    def __init__(self, url, title):
+    filename= db.Column(db.String(512))
+    
+    yoloed = db.Column(db.Boolean())
+    
+    def __init__(self, url, title, fps, duration, subtitles, filename, yoloed=False):
         self.url = url
         self.title = title
-    
+        self.fps = int(fps)
+        self.duration = int(duration)
+        self.subtitles = subtitles
+        self.filename = filename
+        self.yoloed = yoloed
+
     def serialize(self):
         return {
             'id': self.id,
             'title': self.title,
-            'url': self.url
+            'url': self.url,
+            'fps': self.fps,
+            'duration': self.duration,
+            'filename': self.filename,
+            'yoloed': self.yoloed
         }

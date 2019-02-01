@@ -59,9 +59,31 @@ try:
         for item in videolist:
             writer.writerow(item)
             try:
-                message = YouTube(item['url']).streams.first().download('/downloads')
-                requests.post('http://localhost:5005/update-scraper', json={'message': message})
-            except:
-                print("couldn't download %s" % (item['title'].encode('utf-8')))
+                tube = YouTube(item['url'])
+                filepath = tube.streams.first().download('/downloads')
+                title = tube.title.encode('utf-8')
+                duration = tube.length
+                if int(duration) >= 300:
+                    print("Skipping %s because it's too long" % title)
+                    requests.post('http://localhost:5005/update-scraper', json={'message': "Skipping %s because it's too long" % title})
+                    continue
+
+                fps = tube.streams.first().fps
+                caption = tube.captions.get_by_language_code('en')
+                try:
+                    subtitles = caption.generate_srt_captions()
+                except:
+                    subtitles = ''
+
+                video = {'url': item['url'], 'title': str(title), 'fps': int(fps),
+                         'filename': filepath, 'duration': duration,
+                         'subtitles': subtitles}
+                print(video)
+                requests.post('http://localhost:5005/update-scraper', json={'message': "Downloaded %s" % title})
+
+                requests.post('http://localhost:5005/videos', json=video)
+            except Exception as e:
+                print("couldn't download %s, because %s" % (item['title'].encode('utf-8'), e))
+                requests.post('http://localhost:5005/update-scraper', json={'message': "couldn't download %s, because %s" % (item['title'].encode('utf-8'), e)})
 except IOError:
     print("couldn't open out.csv for writing %s" % IOError)
