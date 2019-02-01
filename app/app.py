@@ -68,7 +68,6 @@ def create_scraper():
 @app.route('/videos', methods=['POST', 'GET'])
 def videos():
     if request.method == 'POST':
-        # TODO: add video info to db
         video = request.get_json()
         newVid = Video(**video)
         db.session.add(newVid)
@@ -76,9 +75,9 @@ def videos():
         return jsonify(newVid.serialize())
 
     # list existing videos
-    videos = Video.query.all()
+    vidz = Video.query.all()
     all_videos = []
-    for video in videos:
+    for video in vidz:
         all_videos.append(video.serialize())
     return jsonify({"videos": all_videos})
 
