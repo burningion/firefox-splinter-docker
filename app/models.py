@@ -30,5 +30,6 @@ class Video(db.Model):
             'fps': self.fps,
             'duration': self.duration,
             'filename': self.filename,
+            'subtitles': self.subtitles,
             'yoloed': self.yoloed
         }

@@ -34,6 +34,7 @@ def create_app():
 def initialize_database(app, db):
     """Drop and restore database in a consistent state"""
     with app.app_context():
-        db.drop_all()
+        # uncomment below on first run
+        # db.drop_all()
         db.create_all()
         db.session.commit()
