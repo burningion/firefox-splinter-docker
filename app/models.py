@@ -23,6 +23,10 @@ class Video(db.Model):
         self.yoloed = yoloed
 
     def serialize(self):
+        if len(self.subtitles) > 0:
+            subs = True
+        else:
+            subs = False
         return {
             'id': self.id,
             'title': self.title,
@@ -30,6 +34,6 @@ class Video(db.Model):
             'fps': self.fps,
             'duration': self.duration,
             'filename': self.filename,
-            'subtitles': self.subtitles,
+            'subtitles': subs,
             'yoloed': self.yoloed
         }
