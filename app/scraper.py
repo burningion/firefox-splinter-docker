@@ -75,10 +75,9 @@ try:
                 except:
                     subtitles = ''
 
-                video = {'url': item['url'], 'title': str(title), 'fps': int(fps),
+                video = {'url': item['url'], 'title': title.decode(), 'fps': int(fps),
                          'filename': filepath, 'duration': duration,
                          'subtitles': subtitles}
-                print(video)
                 requests.post('http://localhost:5005/update-scraper', json={'message': "Downloaded %s" % title})
 
                 requests.post('http://localhost:5005/videos', json=video)
