@@ -73,14 +73,18 @@ def videos():
         newVid = Video(**video)
         db.session.add(newVid)
         db.session.commit()
+        # TODO: post to the inference API
         return jsonify(newVid.serialize())
-
     # list existing videos
     vidz = Video.query.all()
     all_videos = []
     for video in vidz:
         all_videos.append(video.serialize())
     return jsonify({"videos": all_videos})
+
+@app.route('/video-inference', methods=['POST'])
+def video_inference():
+    return jsonify({'request': request.get_json()})
 
 totalMessages = []
 lastMessage = 0
