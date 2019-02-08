@@ -84,6 +84,7 @@ def videos():
 
 @app.route('/video-inference', methods=['POST'])
 def video_inference():
+    logger.info('called back with %s' % request.get_json())
     return jsonify({'request': request.get_json()})
 
 totalMessages = []
