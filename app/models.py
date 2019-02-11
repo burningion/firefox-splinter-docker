@@ -5,13 +5,14 @@ import datetime
 db = SQLAlchemy()
 
 class Inference(db.Model):
+    __tablename__ = 'inference'
     id = db.Column(db.Integer, primary_key=True)
     has_clock = db.Column(db.Boolean())
     inference = db.Column(JSON)
     clock_frames = db.Column(db.Integer())
 
     video_id = db.Column(db.Integer(), db.ForeignKey('video.id'))
-    video = db.relationship("Video", back_populates="video")
+    video = db.relationship("Video", back_populates="inference")
 
     def __init__(self, has_clock, inference, clock_frames):
         self.has_clock = has_clock
@@ -27,6 +28,7 @@ class Inference(db.Model):
 
 
 class Video(db.Model):
+    __tablename__ = 'video'
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(128))
     title = db.Column(db.String(256))

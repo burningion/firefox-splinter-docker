@@ -61,7 +61,7 @@ try:
             try:
                 tube = YouTube(item['url'])
                 filepath = tube.streams.first().download('/downloads')
-                title = tube.title.encode('utf-8')
+                title = tube.title
                 duration = tube.length
                 if int(duration) >= 300:
                     print("Skipping %s because it's too long" % title)
@@ -75,12 +75,13 @@ try:
                 except:
                     subtitles = ''
 
-                video = {'url': item['url'], 'title': title.decode(), 'fps': int(fps),
+                video = {'url': item['url'], 'title': title, 'fps': int(fps),
                          'filename': filepath, 'duration': duration,
                          'subtitles': subtitles}
-                requests.post('http://localhost:5005/update-scraper', json={'message': "Downloaded %s" % title})
+                loggermessage = {'message': u"Downloaded %s" % title.encode('utf-8')}
+                requests.post('http://localhost:5005/update-scraper', json=loggermessage, headers={"Content-Type": "application/json; charset=UTF-8"})
 
-                requests.post('http://localhost:5005/videos', json=video)
+                requests.post('http://localhost:5005/videos', json=video, headers={"Content-Type": "application/json; charset=UTF-8"})
             except Exception as e:
                 print("couldn't download %s, because %s" % (item['title'].encode('utf-8'), e))
                 requests.post('http://localhost:5005/update-scraper', json={'message': "couldn't download %s, because %s" % (item['title'].encode('utf-8'), e)})
