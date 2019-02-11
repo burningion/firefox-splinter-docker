@@ -1,5 +1,5 @@
 Flask==1.0.2
-ddtrace==0.20.3
+ddtrace==0.20.4
 blinker==1.4
 psycopg2==2.7.5
 sqlalchemy==1.1.5

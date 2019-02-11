@@ -36,6 +36,6 @@ def initialize_database(app, db):
     with app.app_context():
         # uncomment below on first run
         # db.drop_all()
-        # db.create_all()
-        # db.session.commit()
+        db.create_all()
+        db.session.commit()
         return
