@@ -82,21 +82,28 @@ def videos():
         all_videos.append(video.serialize())
     return jsonify({"videos": all_videos})
 
-@app.route('/video-inference', methods=['POST'])
+@app.route('/video-inference', methods=['POST', 'GET'])
 def video_inference():
-    inference_data = request.get_json()
-    matchingVideo = Video.query.filter_by(filename=inference_data['video_file']).first()
-    logger.info('inference called back with %s which has %i frames with clocks' % (inference_data['video_file'], inference_data['clock_frames']))
-    newInference = Inference(has_clock=inference_data['has_clock'],
-                             inference=inference_data['frame_data'],
-                             clock_frames=inference_data['clock_frames'])
-    newInference.video = matchingVideo
-    matchingVideo.yoloed = True
-    db.session.add(newInference)
-    db.session.add(matchingVideo)
-    db.session.commit()
-    
-    return jsonify({'inference': newInference.serialize()})
+    if request.method == 'POST':
+        inference_data = request.get_json()
+        matchingVideo = Video.query.filter_by(filename=inference_data['video_file']).first()
+        logger.info('inference called back with %s which has %i frames with clocks' % (inference_data['video_file'], inference_data['clock_frames']))
+        newInference = Inference(has_clock=inference_data['has_clock'],
+                                 inference=inference_data['frame_data'],
+                                 clock_frames=inference_data['clock_frames'])
+        newInference.video = matchingVideo
+        matchingVideo.yoloed = True
+        db.session.add(newInference)
+        db.session.add(matchingVideo)
+        db.session.commit()
+
+        return jsonify({'inference': newInference.serialize()})
+    # list existing inferences
+    inferz = Inference.query.all()
+    all_inferz = []
+    for infer in inferz:
+        all_inferz.append(infer.serialize())
+    return jsonify({"inferences": all_inferz})
 
 totalMessages = []
 lastMessage = 0

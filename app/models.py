@@ -23,7 +23,8 @@ class Inference(db.Model):
         return {
             'id': self.id,
             'has_clock': self.has_clock,
-            'clock_frames': self.clock_frames
+            'clock_frames': self.clock_frames,
+            'video_title': self.video.title
         }
 
 
