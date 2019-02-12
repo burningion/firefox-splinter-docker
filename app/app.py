@@ -6,7 +6,7 @@ from ddtrace import tracer, patch
 from ddtrace.contrib.flask import TraceMiddleware
 
 from bootstrap import create_app, db
-from models import Video
+from models import Video, Inference
 
 try:
     initialize(statsd_host=os.environ['DOGSTATSD_HOST_IP'], statsd_port=8125)
@@ -84,8 +84,19 @@ def videos():
 
 @app.route('/video-inference', methods=['POST'])
 def video_inference():
-    logger.info('called back with %s' % request.get_json())
-    return jsonify({'request': request.get_json()})
+    inference_data = request.get_json()
+    matchingVideo = Video.query.filter_by(filename=inference_data['video_file']).first()
+    logger.info('inference called back with %s which has %i frames with clocks' % (inference_data['video_file'], inference_data['clock_frames']))
+    newInference = Inference(has_clock=inference_data['has_clock'],
+                             inference=inference_data['frame_data'],
+                             clock_frames=inference_data['clock_frames'])
+    newInference.video = matchingVideo
+    matchingVideo.yoloed = True
+    db.session.add(newInference)
+    db.session.add(matchingVideo)
+    db.session.commit()
+    
+    return jsonify({'inference': newInference.serialize()})
 
 totalMessages = []
 lastMessage = 0
