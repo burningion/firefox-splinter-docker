@@ -23,7 +23,8 @@ from flask import Flask, Response, jsonify, render_template, request
 # uncomment below and comment out create_app line for no db
 #app = Flask(__name__)
 app = create_app()
-
+app.config['JSON_AS_ASCII'] = False
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 #patch traceware
 traced_app = TraceMiddleware(app, tracer, service="webscraper-app", distributed_tracing=True)
