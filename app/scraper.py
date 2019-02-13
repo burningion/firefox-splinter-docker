@@ -9,6 +9,7 @@ from pytube import YouTube
 from splinter import Browser
 
 import requests
+import uuid
 
 parser = argparse.ArgumentParser(description='YouTube Video Scraper')
 parser.add_argument('pages', type=int, help='Number of page results to scroll', default=5)
@@ -30,7 +31,7 @@ time.sleep(2)
 for i in range(args.pages):
     message ="scrolling %i..." % (i + 1)
     requests.post('http://localhost:5005/update-scraper', json={'message': message})
-    time.sleep(1.5)
+    time.sleep(3.5)
 
     browser.execute_script("window.scrollBy(0, window.innerHeight * 2);")
 
@@ -60,8 +61,9 @@ try:
             writer.writerow(item)
             try:
                 tube = YouTube(item['url'])
-                filepath = tube.streams.first().download('/downloads')
-                title = tube.title
+                filename = str(uuid.uuid4()) + '.mp4'
+                filepath = tube.streams.first().download(filename='/downloads/' + filename)
+                title = tube.title.encode('utf-8')
                 duration = tube.length
                 if int(duration) >= 300:
                     print("Skipping %s because it's too long" % title)
@@ -75,10 +77,10 @@ try:
                 except:
                     subtitles = ''
 
-                video = {'url': item['url'], 'title': title, 'fps': int(fps),
+                video = {'url': item['url'], 'title': title.decode('utf-8'), 'fps': int(fps),
                          'filename': filepath, 'duration': duration,
                          'subtitles': subtitles}
-                loggermessage = {'message': u"Downloaded %s" % title.encode('utf-8')}
+                loggermessage = {'message': "Downloaded %s" % title}
                 requests.post('http://localhost:5005/update-scraper', json=loggermessage, headers={"Content-Type": "application/json; charset=UTF-8"})
 
                 requests.post('http://localhost:5005/videos', json=video, headers={"Content-Type": "application/json; charset=UTF-8"})
