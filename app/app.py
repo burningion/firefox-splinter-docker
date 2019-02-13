@@ -8,13 +8,18 @@ from ddtrace.contrib.flask import TraceMiddleware
 from bootstrap import create_app, db
 from models import Video, Inference
 
+import requests
+
+inferenceURL = ''
+scraperURL = ''
 try:
     initialize(statsd_host=os.environ['DOGSTATSD_HOST_IP'], statsd_port=8125)
     tracer.configure(
     hostname=os.environ['DD_AGENT_SERVICE_HOST'],
     port=os.environ['DD_AGENT_SERVICE_PORT'],
 )
-
+    inferenceURL = 'http://' + os.environ['INFERENCEAPP_SERVICE_HOST'] + ':' + os.environ['INFERENCEAPP_SERVICE_PORT_HTTP']
+    scraperURL = 'http://' + os.environ['SCRAPERAPP_SERVICE_HOST'] + ':' + os.environ['SCRAPERAPP_SERVICE_PORT']
 except:
     print("No environment variables for Datadog set. App won't be instrumented.")
 
@@ -51,6 +56,7 @@ try:
 except:
     print("File logger not configured")
 
+logger.info('inferenceURL: %s' % inferenceURL)
 
 @app.route('/')
 def hello_world():
@@ -69,12 +75,14 @@ def create_scraper():
 
 @app.route('/videos', methods=['POST', 'GET'])
 def videos():
+    global inferenceURL
     if request.method == 'POST':
         video = request.get_json()
         newVid = Video(**video)
         db.session.add(newVid)
         db.session.commit()
-        # TODO: post to the inference API
+        # post to the inference API
+        requests.post(inferenceURL + '/inference', json={'filename': newVid.filename, 'postback_url': scraperURL + '/video-inference'})
         return jsonify(newVid.serialize())
     # list existing videos
     vidz = Video.query.all()

@@ -61,8 +61,8 @@ try:
             writer.writerow(item)
             try:
                 tube = YouTube(item['url'])
-                filename = str(uuid.uuid4()) + '.mp4'
-                filepath = tube.streams.first().download(filename='/downloads/' + filename)
+                filename = str(uuid.uuid4())
+                filepath = tube.streams.first().download('/downloads/', filename=filename)
                 title = tube.title.encode('utf-8')
                 duration = tube.length
                 if int(duration) >= 300:
