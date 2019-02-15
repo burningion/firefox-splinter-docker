@@ -31,7 +31,7 @@ time.sleep(2)
 for i in range(args.pages):
     message ="scrolling %i..." % (i + 1)
     requests.post('http://localhost:5005/update-scraper', json={'message': message})
-    time.sleep(3.5)
+    time.sleep(5.0)
 
     browser.execute_script("window.scrollBy(0, window.innerHeight * 2);")
 
@@ -39,6 +39,7 @@ page = browser.html.encode()
 soup = bs(page, 'html.parser')
 vids = soup.findAll('a', attrs={'class':'yt-simple-endpoint style-scope ytd-video-renderer'})
 browser.quit()
+
 columns = ['id', 'url', 'title']
 videolist =[]
 for v in vids:
