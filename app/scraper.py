@@ -38,7 +38,7 @@ for i in range(args.pages):
 page = browser.html.encode()
 soup = bs(page, 'html.parser')
 vids = soup.findAll('a', attrs={'class':'yt-simple-endpoint style-scope ytd-video-renderer'})
-
+browser.quit()
 columns = ['id', 'url', 'title']
 videolist =[]
 for v in vids:
