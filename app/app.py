@@ -16,8 +16,8 @@ try:
     initialize(statsd_host=os.environ['DOGSTATSD_HOST_IP'], statsd_port=8125)
     inferenceURL = 'http://' + os.environ['INFERENCEAPP_SERVICE_HOST'] + ':' + os.environ['INFERENCEAPP_SERVICE_PORT_HTTP']
     scraperURL = 'http://' + os.environ['SCRAPERAPP_SERVICE_HOST'] + ':' + os.environ['SCRAPERAPP_SERVICE_PORT']
-except:
-    print("No environment variables for Datadog set. App won't be instrumented.")
+except :
+    print("Missing an inference URL. Scraper was probably started before the Inference App.")
 
 from flask import Flask, Response, jsonify, render_template, request
 
