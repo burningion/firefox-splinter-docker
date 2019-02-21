@@ -52,6 +52,8 @@ spec:
           # For dogstatsd
           - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
             value: "true"
+          - name: DD_TAGS
+            value: "env:ml-workshop"
         resources:
           requests:
             memory: "256Mi"

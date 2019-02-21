@@ -14,10 +14,6 @@ inferenceURL = ''
 scraperURL = ''
 try:
     initialize(statsd_host=os.environ['DOGSTATSD_HOST_IP'], statsd_port=8125)
-    tracer.configure(
-    hostname=os.environ['DD_AGENT_SERVICE_HOST'],
-    port=os.environ['DD_AGENT_SERVICE_PORT'],
-)
     inferenceURL = 'http://' + os.environ['INFERENCEAPP_SERVICE_HOST'] + ':' + os.environ['INFERENCEAPP_SERVICE_PORT_HTTP']
     scraperURL = 'http://' + os.environ['SCRAPERAPP_SERVICE_HOST'] + ':' + os.environ['SCRAPERAPP_SERVICE_PORT']
 except:
@@ -31,32 +27,7 @@ app = create_app()
 app.config['JSON_AS_ASCII'] = False
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
-#patch traceware
-traced_app = TraceMiddleware(app, tracer, service="webscraper-app", distributed_tracing=True)
-
-#logging stuff
-import logging
-import json_log_formatter
-import threading
-
-# for correlating logs and traces
-
-FORMAT = ('%(asctime)s %(levelname)s [%(name)s] [%(filename)s:%(lineno)d] '
-          '[dd.trace_id=%(dd.trace_id)s dd.span_id=%(dd.span_id)s] '
-          '- %(message)s')
-logging.basicConfig(format=FORMAT)
-
-try:
-    formatter = json_log_formatter.JSONFormatter()
-    json_handler = logging.FileHandler(filename='/var/log/flask/mylog.json')
-    json_handler.setFormatter(formatter)
-    logger = logging.getLogger('my_json')
-    logger.addHandler(json_handler)
-    logger.setLevel(logging.INFO)
-except:
-    print("File logger not configured")
-
-logger.info('inferenceURL: %s' % inferenceURL)
+app.logger.info('inferenceURL: %s' % inferenceURL)
 
 @app.route('/')
 def hello_world():
@@ -140,6 +111,3 @@ def update_scraper():
 def scraper_status():
     return Response(message_stream(),
                     mimetype="text/event-stream")
-
-if __name__ == '__main__':
-  app.run(host='0.0.0.0',port=5005)

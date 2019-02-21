@@ -12,6 +12,7 @@ RUN python3 -m pip install splinter pytube beautifulsoup4 requests ipython
 COPY app/requirements.txt .
 RUN python3 -m pip install -r requirements.txt
 COPY app/ ./
-
 EXPOSE 5005
-ENTRYPOINT ["python3", "app.py"]
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+CMD ["ddtrace-run", "flask", "run", "--port=5005", "--host=0.0.0.0"]
