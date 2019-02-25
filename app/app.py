@@ -2,8 +2,7 @@ import time, os
 import subprocess
 
 from datadog import initialize, statsd
-from ddtrace import tracer, patch
-from ddtrace.contrib.flask import TraceMiddleware
+from ddtrace import tracer
 
 from bootstrap import create_app, db
 from models import Video, Inference
