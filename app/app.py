@@ -56,7 +56,7 @@ def videos():
         requests.post(inferenceURL + '/inference', json={'filename': newVid.filename, 'postback_url': scraperURL + '/video-inference'})
         return jsonify(newVid.serialize())
     # list existing videos
-    vidz = Video.query.all()
+    vidz = Video.query.order_by(Video.id).all()
     all_videos = []
     for video in vidz:
         all_videos.append(video.serialize())
@@ -67,7 +67,7 @@ def video_inference():
     if request.method == 'POST':
         inference_data = request.get_json()
         matchingVideo = Video.query.filter_by(filename=inference_data['video_file']).first()
-        logger.info('inference called back with %s which has %i frames with clocks' % (inference_data['video_file'], inference_data['clock_frames']))
+        app.logger.info('inference called back with %s which has %i frames with clocks' % (inference_data['video_file'], inference_data['clock_frames']))
         newInference = Inference(has_clock=inference_data['has_clock'],
                                  inference=inference_data['frame_data'],
                                  clock_frames=inference_data['clock_frames'])
@@ -79,7 +79,7 @@ def video_inference():
 
         return jsonify({'inference': newInference.serialize()})
     # list existing inferences
-    inferz = Inference.query.all()
+    inferz = Inference.query.order_by(Inference.id).all()
     all_inferz = []
     for infer in inferz:
         all_inferz.append(infer.serialize())
