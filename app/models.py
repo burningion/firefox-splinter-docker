@@ -55,8 +55,8 @@ class Inference(db.Model):
             length_seconds = (segment[1] / self.video.fps) - (segment[0] / self.video.fps)
             if length_seconds == 0:
                 continue
-            timesegs.append({'start': str(datetime.timedelta(seconds=start_seconds)),
-                             'length': str(datetime.timedelta(seconds=length_seconds))})
+            timesegs.append({'start': getHrMinSec(start_seconds),
+                             'length': getHrMinSec(length_seconds)})
         return timesegs
 
     def serialize(self):
@@ -67,6 +67,10 @@ class Inference(db.Model):
             'video_title': self.video.title
         }
 
+def getHrMinSec(seconds):
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    return '{:d}:{:02d}:{:02d}'.format(h, m, s)
 
 class Video(db.Model):
     __tablename__ = 'video'
