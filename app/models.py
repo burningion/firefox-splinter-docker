@@ -19,6 +19,34 @@ class Inference(db.Model):
         self.inference = inference
         self.clock_frames = clock_frames
 
+    def get_snippets(self, inference_type, frame_gaps_allowed):
+        frame_snippets = []
+
+        if self.has_clock == False:
+            return frame_snippets
+
+        current_frame, start_frame, last_frame = 0, 0, 0
+
+        for i in self.inference:
+            current_frame += 1
+            for detection in i['detections']:
+                if inference_type == detection['type']:
+                    if start_frame == 0:
+                        start_frame = current_frame
+                        last_frame = current_frame
+                    elif (current_frame - last_frame) < frame_gaps_allowed:
+                        last_frame = current_frame
+                    elif (current_frame - last_frame) > frame_gaps_allowed:
+                        frame_snippets.append((start_frame, last_frame))
+                        start_frame = current_frame
+                        last_frame = current_frame
+        if start_frame > 0 and len(frame_snippets) == 0:
+            frame_snippets.append((start_frame, last_frame))
+        if frame_snippets[-1][1] != last_frame:
+            frame_snippets.append((start_frame, last_frame))
+
+        return frame_snippets
+
     def serialize(self):
         return {
             'id': self.id,

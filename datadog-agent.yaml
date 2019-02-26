@@ -40,7 +40,7 @@ spec:
           - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
             value: "true"
           - name: DD_PROCESS_AGENT_ENABLED
-            value: "true"
+            value: "false"
           # APM
           - name: DD_APM_ENABLED
             value: "true"
@@ -64,20 +64,11 @@ spec:
         volumeMounts:
           - name: dockersocket
             mountPath: /var/run/docker.sock
-          - name: procdir
-            mountPath: /host/proc
-            readOnly: true
-          - name: cgroups
-            mountPath: /host/sys/fs/cgroup
-            readOnly: true
           - name: flasklogs
             mountPath: /var/log/flask
             readOnly: true
           - name: vol-datadog-confd
             mountPath: /conf.d
-          - name: passwd
-            mountPath: /etc/passwd
-            readOnly: true
         livenessProbe:
           exec:
             command:
@@ -89,17 +80,8 @@ spec:
             path: /var/run/docker.sock
           name: dockersocket
         - hostPath:
-            path: /proc
-          name: procdir
-        - hostPath:
-            path: /sys/fs/cgroup
-          name: cgroups
-        - hostPath:
             path: /var/log/flask
           name: flasklogs
         - name: vol-datadog-confd
           configMap:
             name: cm-datadog-confd
-        - hostPath:
-            path: /etc/passwd
-          name: passwd
