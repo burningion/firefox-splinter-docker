@@ -47,6 +47,18 @@ class Inference(db.Model):
 
         return frame_snippets
 
+    def get_snippets_as_timesegments(self, inference_type, frame_gaps_allowed):
+        segments = self.get_snippets(inference_type, frame_gaps_allowed)
+        timesegs = []
+        for segment in segments:
+            start_seconds = segment[0] / self.video.fps
+            length_seconds = (segment[1] / self.video.fps) - (segment[0] / self.video.fps)
+            if length_seconds == 0:
+                continue
+            timesegs.append({'start': str(datetime.timedelta(seconds=start_seconds)),
+                             'length': str(datetime.timedelta(seconds=length_seconds))})
+        return timesegs
+
     def serialize(self):
         return {
             'id': self.id,
@@ -65,10 +77,10 @@ class Video(db.Model):
     duration = db.Column(db.Integer())
     subtitles = db.Column(db.Text())
     filename= db.Column(db.String(512))
-    
+
     yoloed = db.Column(db.Boolean())
     inference = db.relationship("Inference", uselist=False, back_populates="video")
-    
+
     def __init__(self, url, title, fps, duration, subtitles, filename, yoloed=False):
         self.url = url
         self.title = title
