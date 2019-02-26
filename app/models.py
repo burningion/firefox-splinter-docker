@@ -60,12 +60,19 @@ class Inference(db.Model):
         return timesegs
 
     def serialize(self):
-        return {
-            'id': self.id,
-            'has_clock': self.has_clock,
-            'clock_frames': self.clock_frames,
-            'video_title': self.video.title
-        }
+        if self.has_clock:
+            return {'id': self.id,
+                    'has_clock': self.has_clock,
+                    'clock_frames': self.clock_frames,
+                    'video_title': self.video.title,
+                    'clock_segments': self.get_snippets_as_timesegments('clock', 10)}
+
+        return {'id': self.id,
+                'has_clock': self.has_clock,
+                'clock_frames': self.clock_frames,
+                'video_title': self.video.title,
+                'clock_segments': []}
+
 
 def getHrMinSec(seconds):
     m, s = divmod(seconds, 60)
