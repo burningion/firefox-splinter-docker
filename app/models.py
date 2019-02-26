@@ -51,8 +51,8 @@ class Inference(db.Model):
         segments = self.get_snippets(inference_type, frame_gaps_allowed)
         timesegs = []
         for segment in segments:
-            start_seconds = segment[0] / self.video.fps
-            length_seconds = (segment[1] / self.video.fps) - (segment[0] / self.video.fps)
+            start_seconds = segment[0] // self.video.fps
+            length_seconds = (segment[1] // self.video.fps) - (segment[0] // self.video.fps)
             if length_seconds == 0:
                 continue
             timesegs.append({'start': getHrMinSec(start_seconds),
