@@ -1,5 +1,5 @@
 from bootstrap import create_app, db
-from models import Video, Inference
+from models import Video, Inference, Snippet
 
 app = create_app()
 

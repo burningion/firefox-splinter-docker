@@ -4,6 +4,23 @@ import datetime
 
 db = SQLAlchemy()
 
+class Snippet(db.Model):
+    __tablename__ = 'snippet'
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(512))
+    snippet_type = db.Column(db.String(128))
+    start = db.Column(db.Interval(native=True))
+    duration = db.Column(db.Interval(native=True))
+
+    video_id = db.Column(db.Integer, db.ForeignKey('video.id'))
+    video = db.relationship("Video", back_populates="snippets")
+
+    def __init__(self, filename, snippet_type, start, duration):
+        self.filename = filename
+        self.snippet_type = snippet_type
+        self.start = start
+        self.duration = duration
+
 class Inference(db.Model):
     __tablename__ = 'inference'
     id = db.Column(db.Integer, primary_key=True)
@@ -93,6 +110,7 @@ class Video(db.Model):
 
     yoloed = db.Column(db.Boolean())
     inference = db.relationship("Inference", uselist=False, back_populates="video")
+    snippets = db.relationship("Snippet", back_populates="video")
 
     def __init__(self, url, title, fps, duration, subtitles, filename, yoloed=False):
         self.url = url
