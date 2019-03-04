@@ -5,7 +5,7 @@ from datadog import initialize, statsd
 from ddtrace import tracer
 
 from bootstrap import create_app, db
-from models import Video, Inference
+from models import Video, Inference, Snippet
 
 import requests
 
@@ -42,6 +42,25 @@ def create_scraper():
                                str(params['search_terms']),
                                '000'])
     return 'scraping process created'
+
+@app.route('/snippets', methods=['POST', 'GET'])
+def snippets():
+    if request.method == 'POST':
+        snippet = request.get_json()
+        newSnippet = Snippet(filename=snippet['filename'],
+                             snippet_type=snippet['snippet_type'],
+                             start=snippet['start'],
+                             duration=snippet['duration'])
+        vid = Video.query.get(snippet['video_id'])
+        newSnippet.video = vid
+        newSnippet.save()
+        return newSnippet.serialize()
+
+    snipz = Snippet.query.all()
+    all_snipz = []
+    for snippet in snipz:
+        all_snipz.append(snippet.serialize())
+    return jsonify({"snippets": all_snipz})
 
 @app.route('/videos', methods=['POST', 'GET'])
 def videos():

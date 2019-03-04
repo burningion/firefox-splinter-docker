@@ -21,6 +21,15 @@ class Snippet(db.Model):
         self.start = start
         self.duration = duration
 
+    def serialize(self):
+        return {'id': self.id,
+                'filename': self.filename,
+                'snippet_type': self.snippet_type,
+                'duration': str(self.duration),
+                'start': str(self.duration),
+                'video': self.video.title
+        }
+
 class Inference(db.Model):
     __tablename__ = 'inference'
     id = db.Column(db.Integer, primary_key=True)
