@@ -4,15 +4,6 @@ import datetime
 
 db = SQLAlchemy()
 
-def get_sec(time_str):
-    h, m, s = time_str.split(':')
-    return int(h) * 3600 + int(m) * 60 + int(s)
-
-def getHrMinSec(seconds):
-    m, s = divmod(seconds, 60)
-    h, m = divmod(m, 60)
-    return '{:d}:{:02d}:{:02d}'.format(h, m, s)
-
 class Snippet(db.Model):
     __tablename__ = 'snippet'
     id = db.Column(db.Integer, primary_key=True)
@@ -27,17 +18,29 @@ class Snippet(db.Model):
     def __init__(self, filename, snippet_type, start, duration):
         self.filename = filename
         self.snippet_type = snippet_type
-        self.start = datetime.timedelta(seconds=get_sec(start))
-        self.duration = datetime.timedelta(seconds=get_sec(duration))
+        self.start = datetime.timedelta(seconds=self.getSec(start))
+        self.duration = datetime.timedelta(seconds=self.getSec(duration))
 
     def serialize(self):
         return {'id': self.id,
                 'filename': self.filename,
                 'snippet_type': self.snippet_type,
-                'duration': getHrMinSec(self.duration.seconds),
-                'start': getHrMinSec(self.start.seconds),
+                'duration': self.getHrMinSec(self.duration.seconds),
+                'start': self.getHrMinSec(self.start.seconds),
                 'video': self.video.title
         }
+
+    @staticmethod
+    def getSec(time_str):
+        h, m, s = time_str.split(':')
+        return int(h) * 3600 + int(m) * 60 + int(s)
+
+    @staticmethod
+    def getHrMinSec(seconds):
+        m, s = divmod(seconds, 60)
+        h, m = divmod(m, 60)
+        return '{:d}:{:02d}:{:02d}'.format(h, m, s)
+
 
 class Inference(db.Model):
     __tablename__ = 'inference'
