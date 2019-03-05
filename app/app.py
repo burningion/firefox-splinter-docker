@@ -7,6 +7,7 @@ from ddtrace import tracer
 from bootstrap import create_app, db
 from models import Video, Inference, Snippet
 
+import datetime
 import requests
 
 inferenceURL = ''
@@ -55,6 +56,14 @@ def snippets():
         newSnippet.video = vid
         newSnippet.save()
         return newSnippet.serialize()
+
+    if request.args.get('filename') and request.args.get('start'):
+        start = datetime.timedelta(seconds=Snippet.getSec(request.args.get('start')))
+        snippet = Snippet.query.filter_by(filename=request.args.get('filename'),
+                                          start=start).first()
+        if snippet:
+            return snippet.jsonify()
+        return jsonify({})
 
     snipz = Snippet.query.all()
     all_snipz = []
