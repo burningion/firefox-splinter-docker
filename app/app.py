@@ -54,7 +54,8 @@ def snippets():
                              duration=snippet['duration'])
         vid = Video.query.get(snippet['video_id'])
         newSnippet.video = vid
-        newSnippet.save()
+        db.session.add(newSnippet)
+        db.session.commit()
         return newSnippet.serialize()
 
     if request.args.get('video_id') and request.args.get('start'):
