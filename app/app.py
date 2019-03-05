@@ -56,14 +56,14 @@ def snippets():
         newSnippet.video = vid
         db.session.add(newSnippet)
         db.session.commit()
-        return newSnippet.serialize()
+        return jsonify(newSnippet.serialize())
 
     if request.args.get('video_id') and request.args.get('start'):
         start = datetime.timedelta(seconds=Snippet.getSec(request.args.get('start')))
         snippet = Snippet.query.filter_by(video_id=request.args.get('video_id'),
                                           start=start).first()
         if snippet:
-            return snippet.jsonify()
+            return jsonify(snippet.serialize())
         return jsonify({})
 
     snipz = Snippet.query.all()
