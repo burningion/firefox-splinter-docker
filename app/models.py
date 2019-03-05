@@ -104,14 +104,16 @@ class Inference(db.Model):
                     'clock_frames': self.clock_frames,
                     'video_title': self.video.title,
                     'clock_segments': self.get_snippets_as_timesegments('clock', 10),
-                    'filename': self.video.filename}
+                    'filename': self.video.filename,
+                    'video_id': self.video_id}
 
         return {'id': self.id,
                 'has_clock': self.has_clock,
                 'clock_frames': self.clock_frames,
                 'video_title': self.video.title,
                 'clock_segments': [],
-                'filename': self.video.filename}
+                'filename': self.video.filename,
+                'video_id': self.video_id}
 
 
 def getHrMinSec(seconds):

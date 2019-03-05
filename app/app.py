@@ -57,9 +57,9 @@ def snippets():
         newSnippet.save()
         return newSnippet.serialize()
 
-    if request.args.get('filename') and request.args.get('start'):
+    if request.args.get('video_id') and request.args.get('start'):
         start = datetime.timedelta(seconds=Snippet.getSec(request.args.get('start')))
-        snippet = Snippet.query.filter_by(filename=request.args.get('filename'),
+        snippet = Snippet.query.filter_by(video_id=request.args.get('video_id'),
                                           start=start).first()
         if snippet:
             return snippet.jsonify()
