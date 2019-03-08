@@ -11,6 +11,8 @@ spec:
     metadata:
       labels:
         app: scraperapp
+      annotations:
+        com.datadoghq.com.ad.logs: '[{"source": "python", "service": "scraper-service"}]'
     spec:
       containers:
       - name: scraperapp
@@ -36,12 +38,10 @@ spec:
               fieldPath: status.hostIP
         - name: DD_LOGS_INJECTION
           value: 'true'
-        - name: DATADOG_SERVICE_NAME
-          value: 'scraper-service'
         - name: DD_LOGS_INJECTION
           value: 'true'
-        - name: DD_TAGS
-          value: 'env:ml-workshop'
+        - name: DATADOG_SERVICE_NAME
+          value: 'scraper-service'
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
