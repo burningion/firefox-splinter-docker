@@ -40,6 +40,8 @@ spec:
           value: 'scraper-service'
         - name: DD_LOGS_INJECTION
           value: 'true'
+        - name: DD_TAGS
+          value: 'env:ml-workshop'
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
