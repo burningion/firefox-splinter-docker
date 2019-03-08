@@ -10,7 +10,7 @@ spec:
       name: datadog-agent
     spec:
       containers:
-      - image: datadog/agent:6.9.0
+      - image: datadog/agent:6.10.1
         imagePullPolicy: Always
         name: datadog-agent
         ports:
@@ -64,11 +64,20 @@ spec:
         volumeMounts:
           - name: dockersocket
             mountPath: /var/run/docker.sock
+          - name: procdir
+            mountPath: /host/proc
+            readOnly: true
+          - name: cgroups
+            mountPath: /host/sys/fs/cgroup
+            readOnly: true
           - name: flasklogs
             mountPath: /var/log/flask
             readOnly: true
           - name: vol-datadog-confd
             mountPath: /conf.d
+          - name: passwd
+            mountPath: /etc/passwd
+            readOnly: true
         livenessProbe:
           exec:
             command:
@@ -77,11 +86,20 @@ spec:
           periodSeconds: 5
       volumes:
         - hostPath:
-            path: /var/run/docker.sock
+            path: /var/snap/microk8s/current/docker.sock
           name: dockersocket
+        - hostPath:
+            path: /proc
+          name: procdir
+        - hostPath:
+            path: /sys/fs/cgroup
+          name: cgroups
         - hostPath:
             path: /var/log/flask
           name: flasklogs
         - name: vol-datadog-confd
           configMap:
             name: cm-datadog-confd
+        - hostPath:
+            path: /etc/passwd
+          name: passwd
