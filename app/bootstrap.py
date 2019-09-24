@@ -1,14 +1,7 @@
+import os
 from flask import Flask
-from ddtrace import tracer, patch
-patch(sqlalchemy=True,psycopg=True)
 from models import Video, db
 
-
-# configure the tracer so that it reaches the Datadog Agent
-# available in another container
-tracer.configure(hostname='agent')
-
-import os
 
 try:
     DB_USERNAME = os.environ['POSTGRES_USER']

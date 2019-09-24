@@ -31,6 +31,7 @@ app.logger.info('inferenceURL: %s' % inferenceURL)
 
 @app.route('/')
 def hello_world():
+    app.logger.info('Homepage hit')
     statsd.increment('web.page_views')
     return render_template('index.html')
 
@@ -38,16 +39,19 @@ def hello_world():
 def create_scraper():
     params = request.get_json()
     statsd.increment('web.scrapers')
+    app.logger.info(f"Creating new web scraper with {params['pages']} pages of '{params['search_terms']}' search")
     result = subprocess.Popen(['ddtrace-run',
                                'scraper.py',
                                str(params['pages']),
                                str(params['search_terms']),
                                '000'])
+    app.logger.info(f"Scraping Subprocess created")
     return 'scraping process created'
 
 @app.route('/snippets', methods=['POST', 'GET'])
 def snippets():
     if request.method == 'POST':
+        app.logger.info(f"Adding new clock snippet to database")
         snippet = request.get_json()
         newSnippet = Snippet(filename=snippet['filename'],
                              snippet_type=snippet['snippet_type'],
@@ -68,6 +72,7 @@ def snippets():
         return jsonify({})
 
     snipz = Snippet.query.all()
+    app.logger.info("Gathering list of all snippets. (Currently {len(snipz)})")
     all_snipz = []
     for snippet in snipz:
         all_snipz.append(snippet.serialize())
@@ -77,6 +82,7 @@ def snippets():
 def videos():
     global inferenceURL
     if request.method == 'POST':
+        app.logger.info("Adding new video to list of videos for inference")
         video = request.get_json()
         newVid = Video(**video)
         db.session.add(newVid)
