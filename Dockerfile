@@ -15,4 +15,6 @@ COPY app/ ./
 EXPOSE 5005
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
+# we need to patch a broken Python module :/
+COPY ./mixins.py /usr/local/lib/python3.6/dist-packages/pytube/mixins.py
 CMD ["ddtrace-run", "flask", "run", "--port=5005", "--host=0.0.0.0"]

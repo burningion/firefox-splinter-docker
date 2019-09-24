@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: scraperapp
-        image: firefox-splinter:latest
-        imagePullPolicy: IfNotPresent
+        image: burningion/firefox-splinter-scraper:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5005
         volumeMounts:
