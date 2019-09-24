@@ -37,6 +37,7 @@ def hello_world():
 @app.route('/create-scraper', methods=['POST'])
 def create_scraper():
     params = request.get_json()
+    statsd.increment('web.scrapers')
     result = subprocess.Popen(['ddtrace-run',
                                'scraper.py',
                                str(params['pages']),
