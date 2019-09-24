@@ -2,7 +2,7 @@
 
 This is a headless Firefox image, with Splinter running. I'm using it to scrape YouTube for videos for an upcoming talk.
 
-Right now (Jan 2019), YouTube and Instagram only show more results when you scroll. So this is a Docker image, allowing you to scroll through the results of a page for scraping.
+Right now, YouTube and Instagram only show more results when you scroll. So this is a Docker image, with a web frontend, allowing you to scroll through the results of a page for scraping.
 
 This is mostly a tool for me to develop in, but if you want to see how to build and use this:
 
@@ -41,6 +41,15 @@ For now, files are downloaded using the `hostPath` mount, to my external drive. 
 $ kubectl create secret generic postgres-user --from-literal=token=<POSTGRES_USER>
 $ kubectl create secret generic postgres-password --from-literal=token=<POSTGRES_PASS>
 $ kubectl apply -f scraper_service.yaml
+```
+
+I also have added some basic observability, if you're interested in following along. 
+
+Create a Datadog account, add your Datadog API key to the cluster, and then run the Datadog Agent DaemonSet:
+
+```
+$ kubectl create secret generic datadog-api --from-literal=token=<YOUR_API_KEY>
+$ kubectl apply -f datadog-agent.yaml
 ```
 
 From there, you should be able to send stuff and generate scraping bots:
