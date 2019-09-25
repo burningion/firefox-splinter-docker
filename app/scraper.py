@@ -65,13 +65,12 @@ try:
                 filename = str(uuid.uuid4())
                 filepath = tube.streams.first().download('/downloads/', filename=filename)
                 title = tube.title.encode('utf-8')
-                '''
                 duration = tube.length
                 if int(duration) >= 300:
                     print("Skipping %s because it's too long" % title)
                     requests.post('http://localhost:5005/update-scraper', json={'message': "Skipping %s because it's too long" % title})
                     continue
-                '''
+
                 fps = tube.streams.first().fps
                 caption = tube.captions.get_by_language_code('en')
                 try:
@@ -80,7 +79,7 @@ try:
                     subtitles = ''
 
                 video = {'url': item['url'], 'title': title.decode('utf-8'), 'fps': int(fps),
-                         'filename': filepath, 'duration': 0,
+                         'filename': filepath, 'duration': duration,
                          'subtitles': subtitles}
                 loggermessage = {'message': "Downloaded %s" % title}
                 requests.post('http://localhost:5005/update-scraper', json=loggermessage, headers={"Content-Type": "application/json; charset=UTF-8"})

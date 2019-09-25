@@ -291,7 +291,7 @@ class YouTube(object):
         :rtype: str
 
         """
-        return self.player_config_args['length_seconds']
+        return self.player_config_args.get('player_response', {}).get('videoDetails', {}).get('lengthSeconds')
 
     @property
     def views(self):
